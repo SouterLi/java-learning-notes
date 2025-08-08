@@ -1,0 +1,59 @@
+# Kafka常见问题
+## 1.为什么kafka速度这么快?
+1. 顺序 I/O 与持久化设计
+- Kafka 将消息追加到日志文件末尾，利用磁盘顺序写入的特性（远快于随机写入）。
+- Kafka 直接利用操作系统的页缓存（而非 JVM 堆内存），避免 GC 开销，同时依赖操作系统异步刷盘策略，减少磁盘 I/O 阻塞。
+2. 零拷贝技术
+- 传统数据读取需要经过 磁盘 → 内核缓冲区 → 用户缓冲区 → Socket 缓冲区 → 网卡，而 Kafka 通过 sendfile() 系统调用，直接将数据从页缓存发送到网卡（跳过用户空间复制），大幅降低 CPU 和内存开销。
+3. 分区（Partition）与并行化
+- 水平扩展能力：Topic 划分为多个 Partition，分散到不同 Broker 节点，实现读写负载均衡。
+- 并行生产与消费：Producer 和 Consumer 可同时操作多个 Partition，充分利用集群资源。
+4. 批处理与压缩
+- Producer 累积消息后批量发送，Consumer 一次拉取多个消息，减少网络和 I/O 开销。
+- 端到端压缩，减少网络传输数据量。
+
+## 2.Kafka适合应用在什么场景？
+大数据量数据队列比较适合kafka  
+
+## 3.Kafka的队列模型是什么？
+发布订阅模型（Pub-Sub）  
+使用主题（Topic） 作为消息通信载体，类似于广播模式；发布者发布一条消息，该消息通过主题传递给所有的订阅者，在一条消息广播之后才订阅的用户则是收不到该条消息的。
+在发布 - 订阅模型中，如果只有一个订阅者，那它和队列模型就基本是一样的了。所以说，发布 - 订阅模型在功能层面上是可以兼容队列模型的。
+
+## 4.Kafka中几个比较重要的概念
+Producer（生产者） : 产生消息的一方。  
+Consumer（消费者） : 消费消息的一方。  
+Broker（代理） : 可以看作是一个独立的 Kafka 实例。多个 Kafka Broker 组成一个 Kafka Cluster。  
+同时，你一定也注意到每个 Broker 中又包含了 Topic 以及 Partition 这两个重要的概念：  
+Topic（主题） : Producer 将消息发送到特定的主题，Consumer 通过订阅特定的 Topic(主题) 来消费消息。  
+Partition（分区） : Partition 属于 Topic 的一部分。一个 Topic 可以有多个 Partition ，并且同一 Topic 下的 Partition 可以分布在不同的 Broker 上，这也就表明一个 Topic 可以横跨多个 Broker 。
+划重点：Kafka 中的 Partition（分区） 实际上可以对应成为消息队列中的队列。  
+
+## 5.Kafka的多副本机制，有什么好处？
+Kafka 为分区（Partition）引入了多副本（Replica）机制。分区（Partition）中的多个副本之间会有一个叫做 leader 的家伙，其他副本称为 follower。我们发送的消息会被发送到 leader 副本，然后 follower 副本才能从 leader 副本中拉取消息进行同步。
+生产者和消费者只与 leader 副本交互。你可以理解为其他副本只是 leader 副本的拷贝，它们的存在只是为了保证消息存储的安全性。当 leader 副本发生故障时会从 follower 中选举出一个 leader,但是 follower 中如果有和 leader 同步程度达不到要求的参加不了 leader 的竞选。
+好处：  
+Kafka 通过给特定 Topic 指定多个 Partition, 而各个 Partition 可以分布在不同的 Broker 上, 这样便能提供比较好的并发能力（负载均衡）。
+Partition 可以指定对应的 Replica 数, 这也极大地提高了消息存储的安全性, 提高了容灾能力，不过也相应的增加了所需要的存储空间。  
+
+## 6.Zookeeper在Kafka中起到什么作用？
+Broker 注册：在 Zookeeper 上会有一个专门用来进行 Broker 服务器列表记录的节点。
+每个Broker在启动时，都会到Zookeeper上进行注册，即到/brokers/ids 下创建属于自己的节点。
+每个Broker就会将自己的IP地址和端口等信息记录到该节点中去  
+Topic 注册：在Kafka中，同一个Topic的消息会被分成多个分区并将其分布在多个Broker上，这些分区信息及与 Broker 的对应关系也都是由 Zookeeper 在维护。比如我创建了一个名字为 my-topic 的主题并且它有两个分区，对应到 zookeeper 中会创建这些文件夹：/brokers/topics/my-topic/Partitions/0、/brokers/topics/my-topic/Partitions/1
+负载均衡 ：上面也说过了 Kafka 通过给特定 Topic 指定多个 Partition, 而各个 Partition 可以分布在不同的 Broker 上, 这样便能提供比较好的并发能力。 对于同一个 Topic 的不同 Partition，Kafka 会尽力将这些 Partition 分布到不同的 Broker 服务器上。当生产者产生消息后也会尽量投递到不同 Broker 的 Partition 里面。当 Consumer 消费的时候，Zookeeper 可以根据当前的 Partition 数量以及 Consumer 数量来实现动态负载均衡。
+
+## 7.如何保证 Kafka 中消息消费的顺序？
+1.1个Topic只对应一个Partition。  
+2.发送消息的时候指定 key/Partition。
+
+## 8.kafka如何保证消息不丢失？
+1.生产者发送不丢失  
+设置ack=all，当所有的broker全部收到消息后，再返回成功；  
+如果返回失败，进行重试；  
+如果重试失败，将消息持久化，等待服务恢复，再进行发送。  
+2.服务器保存消息不丢失  
+当ISR中所有的副本全部宕机时，kafka重新选举的leader没有最新的消息，这条消息就会丢失，
+我们可以设置unclean.leader.election.enable=false，不在ISR中的副本不可参与竞选leader，此时服务会进入不可用状态，但消息不回丢失。  
+3.消费者消费不丢失  
+将自动提交enable.auto.commit设置为false，消费者手动控制提交的逻辑，可以保证消息不丢失
