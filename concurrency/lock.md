@@ -54,3 +54,7 @@ ReentrantLock有两种构造方法，默认的构造方法实现的是非公平�
 8. **条件变量**：
    - `synchronized`可以通过`wait()`、`notify()`和`notifyAll()`方法实现条件变量。
    - `ReentrantLock`提供了`Condition`接口，可以实现更灵活的条件变量机制，支持多个条件变量。
+## ConcurrentHashMap
+`ConcurrentHashMap`是Java提供的一个线程安全的哈希表实现，主要用于在多线程环境下高效地存储和访问键值对。它通过分段锁（Segment Locking）和CAS操作来实现高并发访问。
+### ConcurrentHashMap的底层原理
+
