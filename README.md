@@ -32,9 +32,12 @@
 - [Kafka 知识总结](distributed-system/kafka.md)
 
 ## Java基础
-- [Java基础知识总结](java/java-basic.md)
+- [Java8新特性](java/new-in-java8.md)
 - [Collection 知识总结](java/collection.md)
 - [Map 知识总结](java/map.md)
+- [面向对象编程](java/oop.md)
+- [Java异常处理](java/exception.md)
+- [Java反射](java/reflection.md)
 - [Java设计模式](java/design-model.md)
 
 ## JVM
