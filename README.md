@@ -46,7 +46,7 @@
 - [JVM类加载机制](jvm/classLoading.md)
 
 ## Spring
-- [Spring基础知识总结](spring/spring.md)
+- [Spring 知识总结](spring/spring.md)
 - [Spring boot 知识总结](spring/springboot.md)
 
 ## 系统设计
