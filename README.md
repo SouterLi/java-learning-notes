@@ -7,7 +7,7 @@
 ### MySQL
 - [MySQL基础知识总结](database/mysql/mysql.md)
 - [MySQL常见面试题](database/mysql/mysql-questions.md)
-- [数据库查询性能优化 - 未完成](database/mysql/mysql-performance.md)
+- [数据库查询性能优化](database/mysql/mysql-performance.md)
 - [数据库事务](database/mysql/mysql-transaction.md)
 ### Redis
 - [Redis 基础知识总结](database/redis/redis-basic.md)
