@@ -61,7 +61,7 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 此隔离级别没有做任何处理，因此可能会出现脏读，不可重复读和幻读
 使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）
 #### 2.READ COMMITED
-读已提交，此时读的时候是快照读，读的时候读的并不是此时数据库的数据，而是会生成一个ReadView，ReadView中存储的是最近一次commit的数据，读取的是ReadView里的数据，如果一个事务A有多次读数据库，这中间别的事务B有修改值并提交，那么事务A第一次读取的是快照1，事务A第二次读取的就是快照2
+读已提交，此时读的时候是快照读，读的时候读的并不是此时数据库的数据，而是会生成一个ReadView，ReadView中存储的是最近一次commit的数据，读取的是ReadView里的数据，如果一个事务A有多次读数据库，这中间别的事务B有修改值并提交，那么事务A第一次读取的是快照1，事务A第二次读取的就是快照2  
 只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，可能得到不同的结果（Non-Repeatable Read）
 #### 3.REPEATABLE READ
 可重复读，原理和READ COMMITED类似，不过生成快照的方式不太一样，可重复读的隔离级别下， 事务A多次读取数据都只会生成一次ReadView，后续的读取都读取的是第一次生成的Read View，所以无论中间别的事务是否会提交，都不会改变事务A读取数据的结果。因此不会出现多次读取不一致的情况。
@@ -86,11 +86,11 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 ## MySQL里的各种锁
 ### 共享锁（S锁/读锁）
 - 特性：行级锁，允许多个事务同时读取数据，但阻止其他事务获取排他锁
-- 使用场景：读取数据时使用，确保数据在读取过程中不被修改
+- 使用场景：读取数据时使用，确保数据在读取过程中不被修改，可以使用SELECT ... LOCK IN SHARE MODE语句显式加共享锁
 - 兼容性：与其它共享锁兼容，与排他锁不兼容
 ### 排他锁（X锁/写锁）
 - 特性：也是行级锁，独占锁，阻止其他事务获取任何类型的锁（包括共享锁和排他锁）
-- 使用场景：插入、更新或删除数据时使用
+- 使用场景：插入、更新或删除数据时InnoDB会自动为涉及的行加排他锁，如果希望在读数据的时候加排他锁，需要使用SELECT ... FOR UPDATE语句显式加排他锁
 - 兼容性：与任何锁都不兼容
 ### 意向锁
   意向锁是表锁，表示即将对某些行加锁。  
@@ -109,11 +109,15 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 ### Transactional 使用注意事项
 1.Transactional可以被用于类和方法，接口和接口方法，注意，当用于方法时，只有public方法事务才会被启用；当用于其他方法时，也不会报错，只是不会生效  
 2.仅仅加上@Transactional是不会开启事务的，需要在配置文件中使用配置元素，才会开启事务  
-3.通过配置元素的proxy-target-class，用来控制使用jdk的代理还是使用cglib代理，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
-4.建议直接在实现类上或方法上使用transactional，尽量不要在接口上使用。在接口上使用Transactional，只有设置了基于接口的代理才会生效，  
+3.通过配置元素的proxy-target-class来控制代理类型，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
+4.在接口上使用Transactional只有设置了基于jdk的代理才会生效。 
 ### Transactional 原理
 transactional基于AOP，AOP基于JDK的动态代理机制。  
 Springboot自动支持事务，无需手动配置  
 Spring boot启动时，由于自动装配，会生成一个AOP切面类TransactionInterceptor。所有符合AOP规则要求的类或者方法都会进入这个切面类。  
 AOP容器为使用了@Transactional注解的类创建代理，执行代理类的目标方法时，会调用Advisor类的getAdvise方法，获取TransactionInterceptor，并执行invoke方法。  
 invoke方法会调用invokeWithinTransaction方法，在invokeWithinTransaction方法中，完整地实现了事务管理的功能。  
+### 最佳实践建议
+‌标注位置‌：始终将@Transactional注解放在‌具体类的方法上‌，避免接口标注。
+‌代理配置‌：显式配置@EnableTransactionManagement(proxyTargetClass=true)强制使用CGLIB代理 。
+‌异常处理‌：配合rollbackFor明确指定回滚异常类型，避免默认回滚规则导致意外行为。
