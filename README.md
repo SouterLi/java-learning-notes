@@ -29,7 +29,8 @@
 - [分布式事务](distributed-system/distributed-transaction.md)
 - [分布式 ID](distributed-system/distributed-id.md)
 - [高可用系统设计](distributed-system/high-availability.md)
-- [Kafka 知识总结](distributed-system/kafka.md)
+- [消息队列知识总结](distributed-system/message-queue.md)
+- [Kafka 常见面试题](distributed-system/kafka.md)
 
 ## Java基础
 - [Java8新特性](java/new-in-java8.md)
