@@ -23,6 +23,18 @@ public class Main {
 }
 ```
 3. 线程池
+```java
+// 创建线程池
+ThreadPoolExecutor executor = new ThreadPoolExecutor(
+    corePoolSize,
+    maxPoolSize,
+    keepAliveTime,
+    unit,
+    workQueue,
+    Executors.defaultThreadFactory(),
+    new ThreadPoolExecutor.AbortPolicy()
+);
+```
 
 ## 线程池
 ### 为什么使用线程池？
@@ -34,20 +46,20 @@ public class Main {
 
 ### 线程池的核心参数（以 ThreadPoolExecutor 为例）
 线程池的行为由以下 7 个核心参数决定： 
-1. corePoolSize核心线程数（长期存活的线程，即使空闲也不会被回收）
-2. maximumPoolSize最大线程数（包括核心线程和非核心线程）
-3. keepAliveTime非核心线程的空闲存活时间（超时后回收）60L（单位：秒）
-4. unitkeepAliveTime的时间单位TimeUnit.SECONDS
-5. workQueue任务队列（存放待执行的任务）new LinkedBlockingQueue<>()
-6. threadFactory线程工厂（用于创建线程，可自定义线程名、优先级等）Executors.defaultThreadFactory()
-7. handler拒绝策略（当任务数超过队列容量 + 最大线程数时的处理方式）new ThreadPoolExecutor.Abort
+1. **corePoolSize**：核心线程数（长期存活的线程，即使空闲也不会被回收）
+2. **maximumPoolSize**：最大线程数（包括核心线程和非核心线程）
+3. **keepAliveTime**：非核心线程的空闲存活时间（超时后回收）60L（单位：秒）
+4. **unitKeepAliveTime**：的时间单位TimeUnit.SECONDS
+5. **workQueue**：任务队列（存放待执行的任务）new LinkedBlockingQueue<>()
+6. **threadFactory**：线程工厂（用于创建线程，可自定义线程名、优先级等）Executors.defaultThreadFactory()
+7. **handler**：拒绝策略（当任务数超过队列容量 + 最大线程数时的处理方式）new ThreadPoolExecutor.Abort
 
 ### 线程池的拒绝策略
 当任务无法处理时，线程池会执行拒绝策略（RejectedExecutionHandler），常见策略：
-- AbortPolicy：（默认）直接抛出RejectedExecutionException，阻止系统运行。
-- CallerRunsPolicy：让提交任务的线程自己执行该任务（降低提交速度）。
-- DiscardPolicy：静默丢弃任务，不抛异常。
-- DiscardOldestPolicy：丢弃队列中最旧的任务，然后重新尝试提交当前任务。
+- **AbortPolicy**：（默认）直接抛出RejectedExecutionException，阻止系统运行。
+- **CallerRunsPolicy**：让提交任务的线程自己执行该任务（降低提交速度）。
+- **DiscardPolicy**：静默丢弃任务，不抛异常。
+- **DiscardOldestPolicy**：丢弃队列中最旧的任务，然后重新尝试提交当前任务。
 
 ## 原子类
 是基于CAS原理实现的线程安全的工具类，覆盖了基本类型，数组引用等类型，无锁设计，性能比synchronized快10倍。
