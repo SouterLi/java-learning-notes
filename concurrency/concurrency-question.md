@@ -13,3 +13,31 @@
 - **使用信号量**：可以使用 `Semaphore` 类来实现线程间的通信，允许多个线程访问共享资源。
 - **使用 CountDownLatch**：可以使用 `CountDownLatch` 类来实现线程间的通信，允许一个或多个线程等待其他线程。
 
+## 用过 ThreadLocal 吗？它的工作原理是什么？
+ThreadLocal 可以为每个线程独立存储数据，保证线程安全。  
+- 工作原理：ThreadLocal的工作原理是为每个线程维护一个 ThreadLocalMap，当调用 set 或 get 方法时，它将当前的ThreadLocal实例作为 key，要保存的数据作为 value。
+- 内存泄漏问题：由于 ThreadLocalMap 的 key 是一个弱引用，所以如果 ThreadLocal 实例被回收，但是当前 Thread 没有结束，这个 value 就不会被回收，造成内存泄露，所以在使用完 ThreadLocal 后一定要手动调用 remove 方法回收 value
+
+## 什么是阻塞队列，举几个应用场景？
+### 概念
+阻塞队列常应用于多线程环境中实现线程之间的通信。特点是当队列为空时，从队列中取元素的操作会阻塞，当队列满了的时候，想队列插入数据的操作会被阻塞
+- ArrayBlockingQueue 有界队列
+- LinkedBlockingQueue 无界队列
+- PriorityBlockingQueue FIFO队列
+### 应用场景
+- 生产者消费者模型
+- 线程池的任务队列
+- 线程同步，当线程A依赖于线程B的结果，可以使用阻塞队列，当队列为空时，线程A被阻塞，当线程B将结果写到阻塞队列后，线程A才会被激活。
+
+## 创建一个线程，需要占用多少内存？
+创建线程时，会给这个线程单独分配一个虚拟机栈，线程消耗的内存主要就是这个大小，虚拟机中默认的栈大小为1m，可以使用Xss来设置。
+
+## 如果线程A依赖于线程B，可以用什么方法实现？
+1. Thread.join()
+2. Future + ExecutorService
+3. CompletableFuture
+4. CountDownLatch
+5. BlockingQueue
+6. 回调方法
+
+## 当请求数超过核心线程数会发生什么？超过最大线程数呢？
