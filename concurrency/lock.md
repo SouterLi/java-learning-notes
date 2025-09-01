@@ -68,7 +68,7 @@ CountDownLatch基于AQS实现。
 使用带超时的 await() 方法，避免长时间阻塞
 
 ## 3.ConcurrentHashMap
-`ConcurrentHashMap`是Java提供的一个线程安全的哈希表实现，主要用于在多线程环境下高效地存储和访问键值对。它通过分段锁（Segment Locking）和CAS操作来实现高并发访问。
+`ConcurrentHashMap`是Java提供的一个线程安全的哈希表实现，主要用于在多线程环境下高效且安全地存储和访问键值对。
 ### ConcurrentHashMap的底层原理
 ConcurrentHashMap的底层结构和 HashMap 一样都是数组+链表（红黑树）的结构。
 ConcurrentHashMap使用CAS+synchronized的组合来保证线程安全。

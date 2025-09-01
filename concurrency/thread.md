@@ -48,3 +48,6 @@ public class Main {
 - CallerRunsPolicy：让提交任务的线程自己执行该任务（降低提交速度）。
 - DiscardPolicy：静默丢弃任务，不抛异常。
 - DiscardOldestPolicy：丢弃队列中最旧的任务，然后重新尝试提交当前任务。
+
+## 原子类
+是基于CAS原理实现的线程安全的工具类，覆盖了基本类型，数组引用等类型，无锁设计，性能比synchronized快10倍。
