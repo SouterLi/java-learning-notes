@@ -106,11 +106,6 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 - 注意：间隙锁只在REPEATABLE READ和SERIALIZABLE隔离级别下使用，防止幻读
 
 ## Transactional注解
-### Transactional 使用注意事项
-1.Transactional可以被用于类和方法，接口和接口方法，注意，当用于方法时，只有public方法事务才会被启用；当用于其他方法时，也不会报错，只是不会生效  
-2.仅仅加上@Transactional是不会开启事务的，需要在配置文件中使用配置元素，才会开启事务  
-3.通过配置元素的proxy-target-class来控制代理类型，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
-4.在接口上使用Transactional只有设置了基于jdk的代理才会生效。 
 ### Transactional 原理
 transactional基于AOP，AOP基于JDK的动态代理机制。  
 Springboot自动支持事务，无需手动配置  
@@ -118,6 +113,11 @@ Spring boot启动时，由于自动装配，会生成一个AOP切面类Transacti
 AOP容器为使用了@Transactional注解的类创建代理，执行代理类的目标方法时，会调用Advisor类的getAdvise方法，获取TransactionInterceptor，并执行invoke方法。  
 invoke方法会调用invokeWithinTransaction方法，在invokeWithinTransaction方法中，完整地实现了事务管理的功能。  
 ### 最佳实践建议
-‌标注位置‌：始终将@Transactional注解放在‌具体类的方法上‌，避免接口标注。
+‌标注位置‌：始终将@Transactional注解放在‌实现类的方法上‌，避免接口标注。
 ‌代理配置‌：显式配置@EnableTransactionManagement(proxyTargetClass=true)强制使用CGLIB代理 。
 ‌异常处理‌：配合rollbackFor明确指定回滚异常类型，避免默认回滚规则导致意外行为。
+### Transactional 使用注意事项
+1.Transactional可以被用于类和方法，接口和接口方法，注意，当用于方法时，只有public方法事务才会被启用；当用于其他方法时，也不会报错，只是不会生效  
+2.仅仅加上@Transactional是不会开启事务的，需要在配置文件中使用配置元素，才会开启事务  
+3.通过配置元素的proxy-target-class来控制代理类型，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
+4.在接口上使用Transactional只有设置了基于jdk的代理才会生效。 
