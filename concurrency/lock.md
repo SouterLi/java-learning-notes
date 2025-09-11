@@ -49,10 +49,7 @@ ReentrantLock有两种构造方法，默认的构造方法实现的是非公平�
 6. **公平性**：
    - `synchronized`是非公平锁，无法保证线程获取锁的顺序。
    - `ReentrantLock`可以选择公平锁或非公平锁，公平锁可以保证线程获取锁的顺序。
-7. **性能监控**：
-   - `synchronized`无法提供锁的状态信息。
-   - `ReentrantLock`提供了`getHoldCount()`、`isLocked()`等方法，可以获取锁的状态信息，方便进行性能监控和调试。
-8. **条件变量**：
+7. **条件变量**：
    - `synchronized`可以通过`wait()`、`notify()`和`notifyAll()`方法实现条件变量。
    - `ReentrantLock`提供了`Condition`接口，可以实现更灵活的条件变量机制，支持多个条件变量。
 

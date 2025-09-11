@@ -97,19 +97,6 @@ System.out.println(names); // 输出: [Alice, Charlie]
 names.replaceAll(String::toUpperCase);
 System.out.println(names); // 输出: [ALICE, CHARLIE]
 ```
-
-### 新的日期和时间 API
-Java 8 引入了新的日期和时间 API，位于 `java.time` 包中。这个 API 提供了更好的日期和时间处理能力，解决了旧的 `java.util.Date` 和 `java.util.Calendar` 的一些问题。
-```java
-LocalDate today = LocalDate.now();
-LocalDate birthday = LocalDate.of(1990, Month.JANUARY, 1);
-Period age = Period.between(birthday, today);
-System.out.println("Age: " + age.getYears() + " years"); // 输出: Age: [实际年龄] years
-LocalTime now = LocalTime.now();
-LocalTime noon = LocalTime.NOON;
-Duration duration = Duration.between(now, noon);
-System.out.println("Duration until noon: " + duration.toMinutes() + " minutes");
-```
 ### 其他改进
 ConcurrentHashMap取消segment的概念，加锁的粒度变为node，将reentrantlock改为cas+synchronized  
 HashMap的扩容机制改为使用链表+红黑树，链表长度超过8时转换为红黑树
