@@ -9,9 +9,9 @@
 - 从GC Roots（一组必须活跃的引用）开始，通过引用链遍历所有可达对象，未被遍历到的对象被视为垃圾
 ### GC Roots通常包括：
 - 虚拟机栈中引用的对象
-- 方法区中类静态属性引用的对象
+- 方法区中类静态变量引用的对象
 - 方法区中常量引用的对象
-- 本地方法栈中JNI引用的对象
+- 本地方法栈中引用的对象
 - 虚拟机内部引用（如系统类加载器等）
 
 ## CMS与G1的区别
@@ -56,5 +56,20 @@ OOM 错误有多种类型，首先需明确具体错误类型（通过异常日�
 (1) 错误日志：检查异常堆栈和 OOM 前的 GC 日志（需开启 JVM 参数）  
 (2) 堆内存快照（Heap Dump）：在 OOM 时自动生成 Heap Dump。手动生成 Heap Dump。  
 (3) 当前堆内存的配置情况：使用jmap -heap命令查看堆信息
-#### 3. 使用工具内存泄漏分析（MAT/Eclipse Memory Analyzer）
+#### 3. 使用工具内存泄漏分析
    Java Visualvm软件
+
+## 几种JVM分析工具
+### 1. JDK自带工具
+- jstat：监控JVM内存、GC等性能指标
+- jmap：生成堆内存快照（Heap Dump）
+- jstack：生成线程堆栈快照，分析线程状态
+- jinfo：查看和修改JVM参数
+- jcmd：综合命令行工具，替代jps、jstat、jmap等
+### 2. 第三方工具
+- VisualVM：图形化监控和分析JVM性能
+- YourKit：商业化JVM分析工具，功能强大
+- Eclipse MAT：分析Heap Dump，查找内存泄漏
+- GCViewer：分析GC日志，优化GC性能
+### 3. APM工具
+- 如Pinpoint、SkyWalking等，集成JVM监控功能
