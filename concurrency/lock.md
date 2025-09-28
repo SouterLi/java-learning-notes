@@ -53,25 +53,7 @@ ReentrantLock有两种构造方法，默认的构造方法实现的是非公平�
    - `synchronized`可以通过`wait()`、`notify()`和`notifyAll()`方法实现条件变量。
    - `ReentrantLock`提供了`Condition`接口，可以实现更灵活的条件变量机制，支持多个条件变量。
 
-## CountDownLatch
-### 核心概念
-CounDownLatch是一个带计数器的并发控制器。它的作用是主线程等待多个其他线程，当所有其他线程都完成后，主线程才会被唤醒，否则就阻塞。  
-CountDownLatch初始化的时候会设置一个计数值，每当一个其他线程完成的时候，调用一次countDown()方法，计数器减一，当计数器减到0的时候，await()方法停止被阻塞，继续向后执行。
-### 实现原理
-CountDownLatch基于AQS实现。  
-初始化一个AQS，state为计数器的值，每次线程结束，调用releaseShared(1)方法，state-1，当state归零的时候唤醒所有等待线程。
-### 注意事项
-务必在 finally 块中调用 countDown() 防止异常导致计数器无法归零  
-使用带超时的 await() 方法，避免长时间阻塞
-
-## 3.ConcurrentHashMap
-`ConcurrentHashMap`是Java提供的一个线程安全的哈希表实现，主要用于在多线程环境下高效且安全地存储和访问键值对。
-### ConcurrentHashMap的底层原理
-ConcurrentHashMap的底层结构和 HashMap 一样都是数组+链表（红黑树）的结构。
-ConcurrentHashMap使用CAS+synchronized的组合来保证线程安全。
-插入数据时，如果 hash 没有冲突，则直接使用 CAS 操作来插入数据；如果发生了 hash 冲突，则会使用 synchronized 锁住这个节点，然后进行后续操作。
-
-## 4.volatile关键字
+## 3.volatile关键字
 `volatile`关键字是Java中的一个修饰符，用于修饰变量。它的主要作用是确保变量在多线程环境中的可见性和禁止指令重排序。
 ### volatile的作用
 1. **可见性**：当一个线程修改了被`volatile`修饰的变量时，其他线程可以立即看到这个修改。`volatile`变量的值在主内存中是可见的，其他线程读取时会从主内存中获取最新的值，而不是从线程的本地缓存中获取。

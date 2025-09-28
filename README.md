@@ -5,8 +5,8 @@
 
 ## 数据库
 ### MySQL
-- [MySQL基础知识总结](database/mysql/mysql.md)
-- [MySQL常见面试题](database/mysql/mysql-questions.md)
+- [MySQL基础知识总结](database/mysql/mysql-basic.md)
+- [MySQL常见面试题](database/mysql/database-transactional.md)
 - [数据库查询性能优化](database/mysql/mysql-performance.md)
 - [数据库事务](database/mysql/mysql-transaction.md)
 ### Redis

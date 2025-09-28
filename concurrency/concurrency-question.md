@@ -5,6 +5,9 @@
 - **使用 CountDownLatch**：可以创建一个 `CountDownLatch`，线程 B 在执行完毕后调用 `countDown()` 方法，线程 A 在调用 `await()` 方法时会阻塞，直到线程 B 执行完毕。
 - **使用 Future**：可以使用线程池提交线程 B 的任务，线程 A 可以通过 `Future.get()` 获取线程 B 的执行结果，在获取到结果后继续执行。
 - **使用BlockingQueue**：线程B将结果放入阻塞队列，线程A从队列中取出结果，如果队列为空则阻塞。
+### 如果是线程A要依赖于线程B和线程C的执行结果呢？
+- **使用 CountDownLatch**：可以创建一个 `CountDownLatch`，初始值为2，线程 B 和线程 C 在执行完毕后分别调用 `countDown()` 方法，线程 A 在调用 `await()` 方法时会阻塞，直到线程 B 和线程 C 都执行完毕。
+- **使用 CompletableFuture**：可以使用线程池提交线程 B 和线程 C 的任务，使用CompletableFuture.allOf()方法等待B和C结束，再执行A。
 
 ## 如何实现线程间的通信？
 - **使用共享变量**：线程可以通过共享变量进行通信，例如使用 `volatile` 关键字修饰的变量，确保线程间的可见性。
@@ -31,14 +34,6 @@ ThreadLocal 可以为每个线程独立存储数据，保证线程安全。
 
 ## 创建一个线程，需要占用多少内存？
 创建线程时，会给这个线程单独分配一个虚拟机栈，线程消耗的内存主要就是这个大小，虚拟机中默认的栈大小为1m，可以使用Xss来设置。
-
-## 如果线程A依赖于线程B，可以用什么方法实现？
-1. Thread.join()
-2. Future + ExecutorService
-3. CompletableFuture
-4. CountDownLatch
-5. BlockingQueue
-6. 回调方法
 
 ## 当请求数超过核心线程数会发生什么？超过最大线程数呢？
 当请求数超过核心线程数时，线程池会将多余的任务放入任务队列中等待执行。

@@ -53,3 +53,9 @@ public class MyBean {
     }
 }
 ```
+
+## Spring如何解决Bean循环依赖的问题？
+Spring通过三级缓存机制来解决Bean的循环依赖问题。三级缓存包括：
+1. **一级缓存（singletonObjects）**：存放完全初始化好的单例Bean
+2. **二级缓存（earlySingletonObjects）**：存放正在创建中的单例Bean的早期引用
+3. **三级缓存（singletonFactories）**：存放Bean的工厂对象，用于创建Bean的早期引用

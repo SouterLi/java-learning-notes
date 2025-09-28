@@ -61,5 +61,14 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 - **DiscardPolicy**：静默丢弃任务，不抛异常。
 - **DiscardOldestPolicy**：丢弃队列中最旧的任务，然后重新尝试提交当前任务。
 
+### 线程池的工作流程？
+1. 线程池采取懒加载的模式，初始化时不会创建线程，只有当有任务提交时才会创建线程。
+2. 当有新任务提交时：
+   - 如果当前运行的线程数小于corePoolSize，创建新线程执行任务。
+   - 如果当前运行的线程数等于corePoolSize，将任务放入workQueue队列中等待执行。
+   - 如果workQueue已满且当前线程数小于maximumPoolSize，创建新线程执行任务。
+   - 如果workQueue已满且当前线程数等于maximumPoolSize，执行拒绝策略。
+3. 非核心线程在空闲keepAliveTime时间后会被回收，核心线程则不会被回收。
+
 ## 原子类
 是基于CAS原理实现的线程安全的工具类，覆盖了基本类型，数组引用等类型，无锁设计，性能比synchronized快10倍。
