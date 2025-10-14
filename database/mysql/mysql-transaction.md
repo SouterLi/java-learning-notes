@@ -83,7 +83,8 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 不支持事务，如果有事务，就抛出异常
 #### MANDATORY
 不支持事务，如果有事务，就抛出异常IllegalTransactionStateException
-## MySQL里的各种锁
+
+## MySQL里常见的锁有哪些？
 ### 共享锁（S锁/读锁）
 - 特性：行级锁，允许多个事务同时读取数据，但阻止其他事务获取排他锁
 - 使用场景：读取数据时使用，确保数据在读取过程中不被修改，可以使用SELECT ... LOCK IN SHARE MODE语句显式加共享锁
@@ -106,11 +107,6 @@ MYsql中实现MVCC，是通过3个辅助字段，undolog和ReadView共同实现�
 - 注意：间隙锁只在REPEATABLE READ和SERIALIZABLE隔离级别下使用，防止幻读
 
 ## Transactional注解
-### Transactional 使用注意事项
-1.Transactional可以被用于类和方法，接口和接口方法，注意，当用于方法时，只有public方法事务才会被启用；当用于其他方法时，也不会报错，只是不会生效  
-2.仅仅加上@Transactional是不会开启事务的，需要在配置文件中使用配置元素，才会开启事务  
-3.通过配置元素的proxy-target-class来控制代理类型，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
-4.在接口上使用Transactional只有设置了基于jdk的代理才会生效。 
 ### Transactional 原理
 transactional基于AOP，AOP基于JDK的动态代理机制。  
 Springboot自动支持事务，无需手动配置  
@@ -118,6 +114,45 @@ Spring boot启动时，由于自动装配，会生成一个AOP切面类Transacti
 AOP容器为使用了@Transactional注解的类创建代理，执行代理类的目标方法时，会调用Advisor类的getAdvise方法，获取TransactionInterceptor，并执行invoke方法。  
 invoke方法会调用invokeWithinTransaction方法，在invokeWithinTransaction方法中，完整地实现了事务管理的功能。  
 ### 最佳实践建议
-‌标注位置‌：始终将@Transactional注解放在‌具体类的方法上‌，避免接口标注。
+‌标注位置‌：始终将@Transactional注解放在‌实现类的方法上‌，避免接口标注。
 ‌代理配置‌：显式配置@EnableTransactionManagement(proxyTargetClass=true)强制使用CGLIB代理 。
 ‌异常处理‌：配合rollbackFor明确指定回滚异常类型，避免默认回滚规则导致意外行为。
+### Transactional 使用注意事项
+1.Transactional可以被用于类和方法，接口和接口方法，注意，当用于方法时，只有public方法事务才会被启用；当用于其他方法时，也不会报错，只是不会生效  
+2.仅仅加上@Transactional是不会开启事务的，需要在配置文件中使用配置元素，才会开启事务  
+3.通过配置元素的proxy-target-class来控制代理类型，如果设置为true，就使用cglib，如果设置为false或者不设置，就会忽略cglib，转而使用jdk代理  
+4.在接口上使用Transactional只有设置了基于jdk的代理才会生效。 
+
+## 3.讲一下mysql中的事务隔离级别？
+mysql 的事务隔离级别一共有 4 种
+1. **读未提交**：这种隔离级别会出现脏读的情况。
+2. **读已提交**：这种不会出现脏读，但是会出现不可重复读。它的原理是每次提交修改的时候生成一个 readview，事务读的是 readview，这就避免了取到未提交的数据。
+3. **可重复度**：这种隔离级别不会出现脏读和不可重复读，但是会出现幻读。
+4. **串行**：完全不支持多个事务并发执行，避免了幻读，但是性能很差。
+
+## 7.MySQL 是如何避免幻读的？
+MySQL 通过使用锁机制来避免幻读。
+在可重复读隔离级别下，MySQL 使用间隙锁（Gap Lock）来锁定范围内的记录，从而防止其他事务在该范围内插入新记录。
+这样可以确保在一个事务中多次读取同一范围时，结果是一致的，不会出现幻读现象。
+
+
+## 4.你知道数据库事务吗，一般是怎么使用事务的？
+数据库事务是指一组操作的集合，这些操作要么全部成功，要么全部失败，保证数据的一致性和完整性。事务具有四个基本特性，简称为 ACID：
+1. **原子性（Atomicity）**：事务中的所有操作要么全部成功，要么全部失败。
+2. **一致性（Consistency）**：事务执行前后，数据库都处于一致的状态。
+3. **隔离性（Isolation）**：不同事务之间相互隔离，互不干扰。
+4. **持久性（Durability）**：一旦事务提交，数据的修改是永久性的，即使系统崩溃也不会丢失。
+
+我一般使用 Transactional 注解来管理事务。
+在方法上添加 @Transactional 注解，表示该方法需要在事务中执行。
+Spring 会自动处理事务的开始、提交和回滚。
+
+## 5.Transactional注解有失效的时候吗？如果有，是什么情况？
+@Transactional 注解在以下情况下可能会失效：
+1. **内部方法调用**：如果在同一个类中调用带有 `@Transactional` 注解的方法，Spring 不会拦截这个调用，因此事务不会生效。解决方法是将该方法提取到另一个类中，或者使用 AOP 代理。
+2. **非 public 方法**：`@Transactional` 注解只对 public 方法有效。如果在类中使用了 `@Transactional` 注解，但方法是 private、protected 或 package-private，则事务不会生效。
+3. **异常类型**：默认情况下，`@Transactional` 只会对`RuntimeException`和`Error`进行回滚。如果抛出的是受检异常（`Checked Exception`），则不会回滚事务。可以通过设置 `rollbackFor` 属性来指定需要回滚的异常类型。
+4. **事务传播行为**：如果在同一个事务中调用了另一个事务方法，并且传播行为设置为 `REQUIRES_NEW`，则会创建一个新的事务，这可能导致原有事务失效。
+5. **数据库引擎不支持事务**：如果使用了不支持事务的数据库引擎（如 MyISAM），则 `@Transactional` 注解不会生效。
+6. **AOP 代理问题**：如果使用了 CGLIB 代理且注解放在了接口类而不是实现类，会导致事务失效。
+7. **多线程环境**：在多线程环境中，如果事务方法被多个线程并发调用，可能会导致事务失效。因为每个线程都有自己的事务上下文，无法共享事务状态。

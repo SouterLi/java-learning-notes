@@ -47,3 +47,23 @@ JDK1.8在数据迁移时使用尾插法，保持链表元素的原始顺序
 2. HashMap的键值对是无序的，而TreeMap的键值对是有序的，按照键的自然顺序或指定的比较器顺序进行排序。
 3. HashMap的性能通常优于TreeMap，因为TreeMap需要维护键的顺序。
 4. TreeMap支持范围查询，而HashMap不支持。
+
+
+## ConcurrentHashMap
+`ConcurrentHashMap`是Java提供的一个线程安全的哈希表实现，主要用于在多线程环境下高效且安全地存储和访问键值对。
+### ConcurrentHashMap的底层原理
+ConcurrentHashMap的底层结构和 HashMap 一样都是数组+链表（红黑树）的结构。  
+ConcurrentHashMap使用CAS+synchronized的组合来保证线程安全。  
+插入数据时，如果 hash 没有冲突，则直接使用 CAS 操作来插入数据；如果发生了 hash 冲突，则会使用 synchronized 锁住这个节点，然后进行后续操作。
+### ConcurrentHashMap在jdk1.7和1.8的区别
+1. **锁的粒度**：
+    - JDK 1.7：使用分段锁（Segment Locking），将整个哈希表分为多个段（Segment），每个段有自己的锁，这样多个线程可以同时访问不同段的数据，提高并发性能。
+    - JDK 1.8：取消了分段锁，改为使用更细粒度的锁（Node Level Locking），即对每个桶（Bucket）使用锁，这样进一步提高了并发性能。
+2. **数据结构**：
+    - JDK 1.7：底层数据结构是数组+链表，当链表长度超过一定阈值（默认8）时，会转换为红黑树，以提高查找效率。
+    - JDK 1.8：底层数据结构仍然是数组+链表+红黑树，但在插入数据时，使用了 CAS 操作来减少锁的竞争。
+3. **扩容机制**：
+    - JDK 1.7：扩容时会锁住整个 Segment，其他线程无法访问该 Segment，可能导致性能瓶颈。
+    - JDK 1.8：扩容时使用了更细粒度的锁，允许其他线程继续访问未被扩容的部分，提高了并发性能。
+4. **性能**：
+    - JDK 1.8 相比 JDK 1.7 在高并发场景下性能更好，尤其是在读多写少的场景下表现尤为突出。
