@@ -30,6 +30,8 @@
 - `@Before`、`@After`、`@Around`：定义切面方法的执行时机，分别表示在方法执行前、后和环绕执行。
 
 ## Spring的AOP
+### 什么是AOP？
+
 
 
 ## Spring中Bean的生命周期
@@ -59,3 +61,24 @@ Spring通过三级缓存机制来解决Bean的循环依赖问题。三级缓存�
 1. **一级缓存（singletonObjects）**：存放完全初始化好的单例Bean
 2. **二级缓存（earlySingletonObjects）**：存放正在创建中的单例Bean的早期引用
 3. **三级缓存（singletonFactories）**：存放Bean的工厂对象，用于创建Bean的早期引用
+
+## Spring
+ssm框架-Spring框架体系结构
+Bean的生命周期
+Spring关键技术原理
+Spring框架配置
+核心组件
+IOC机制，源码分析
+BeanDefinition深度理解
+利用三级缓存解决循环依赖问题
+AOP使用，源码
+寻找入口方式
+获取增强器过程
+匹配获取代理对象
+创建代理类
+代理实例调用invoke
+spring事务
+springMVC执行流程
+springMVC初始化过程
+springboot框架
+自动装配原理
