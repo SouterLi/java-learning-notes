@@ -27,7 +27,7 @@ JMM（Java内存模型）是Java虚拟机规范的一部分，定义了Java程�
   - Java：synchronized关键字、ReentrantLock等
 
 ## CAS
-CAS 是一种无锁（Lock-Free）算法，通过硬件指令（如 x86 的 CMPXCHG）保证操作的原子性。
+CAS 是一种无锁（Lock-Free）算法，通过硬件指令保证操作的原子性。
 - **操作逻辑**：比较当前值（expectedValue）与内存中的值是否一致： 如果一致，则将新值（newValue）写入内存；如果不一致，则操作失败（通常通过自旋重试）。
 - **优点**
   - 高性能：无锁操作减少线程阻塞，适合高并发场景。

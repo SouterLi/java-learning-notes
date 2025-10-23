@@ -5,9 +5,9 @@ AQS，抽象队列同步器，它是实现ReentrantLock和CountDownLatch的关�
 AQS维护了一个资源和资源状态，还有一个FIFO的队列，资源状态是使用volatile关键字修饰的，为了保证资源的可见性。
 ### 实现ReentrantLock和CountDownLatch
 #### ReentrantLock
-以ReentrantLock为例，state初始化为0，表示未锁定状态。A线程lock()时，会调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
+以ReentrantLock为例，state初始化为0，表示未锁定状态。A线程调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
 #### CountDownLatch
-再以CountDownLatch以例，任务分为N个子线程去执行，state也初始化为N（注意N要与线程个数一致）。这N个子线程是并行执行的，每个子线程执行完后countDown()一次，state会CAS减1。等到所有子线程都执行完后(即state=0)，会unpark()主调用线程，然后主调用线程就会从await()函数返回，继续后余动作。
+任务分为N个子线程去执行，state也初始化为N。这N个子线程是并行执行的，每个子线程执行完后调用countDown()方法，state会CAS减1。等到所有子线程都执行完后，state=0，主线程就会从await()函数返回，继续后续动作。
 
 ## CompletableFuture
 CompletableFuture是Java8引入的异步编程工具类。
