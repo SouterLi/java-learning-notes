@@ -6,6 +6,5 @@ Java 中的异常分为两大类：
 
 ## 异常处理
 1. try-catch捕获异常并处理
-2. throws声明异常
-
-## new Throwable()
+2. 在方法名的地方添加throws声明异常
+3. 使用Try-With-Resources（自动资源管理）

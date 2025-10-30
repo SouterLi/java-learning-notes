@@ -31,20 +31,12 @@
 - NodePort：通过节点端口暴露服务
 - LoadBalancer：使用云提供商的负载均衡器
 - ExternalName：通过返回 CNAME 记录映射到外部服务
-## 高级概念
-### 1.什么是 Ingress？与 Service 有什么区别？
-- Ingress 是管理外部访问集群服务的 API 对象，提供 HTTP/HTTPS 路由规则。
-- 区别：Service 主要提供 L4 负载均衡，而 Ingress 提供 L7 路由功能。
-### 2.解释 ConfigMap 和 Secret 的作用及区别
+### 1.解释 ConfigMap 和 Secret 的作用及区别
 - ConfigMap
   ：存储非敏感配置数据
 - Secret
   ：存储敏感信息（如密码、令牌等）
 - 区别：Secret 会进行 base64 编码，但不会加密，适合敏感度较低的数据。
-  3.什么是 Helm？它的主要作用是什么？
-- Helm 是 Kubernetes 的包管理器，使用称为 Chart 的打包格式。
-- 主要作用：简化 Kubernetes 应用的部署和管理，支持版本控制、依赖管理和模板化配置。
-## 运维与故障排除
 ### 1.如何排查 Pod 无法启动的问题？
 - 检查 Pod 状态：
   kubectl describe pod <pod-name>
@@ -80,9 +72,6 @@
 ### 3.如何限制 Pod 的资源使用？
 - 通过
   resources 字段设置 requests 和 limits：
-  yaml
-  复制
-  下载
   resources:
   requests:
   memory: "64Mi"
@@ -91,11 +80,6 @@
   memory: "128Mi"
   cpu: "500m"
 ## 实际场景
-### 1.如何将本地开发环境与 Kubernetes 集群集成？
-- 使用 Minikube 或 kind 创建本地集群
-- 使用 kubectl 与集群交互
-- 使用 Skaffold 或 Tilt 实现持续开发
-- 使用 Telepresence 进行本地开发与集群服务交互
 ### 2.描述一个完整的 CI/CD 流水线如何与 Kubernetes 集成
 - 代码提交触发 CI 流水线
 - 构建 Docker 镜像并推送到镜像仓库

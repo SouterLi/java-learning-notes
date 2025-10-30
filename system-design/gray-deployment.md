@@ -12,7 +12,7 @@
 - 配置Grafana仪表盘，实时展示v1和v2的关键指标。
 - 设置Prometheus告警规则，当v2的CPU使用率超过设定阈值（如80%）或错误率超过设定阈值（如1%）时，触发告警。
 #### 3. 自动回滚
-- 使用Kubernetes的Horizontal Pod Autoscaler（HPA）监控Pod的资源使用情况，结合Prometheus告警，实现自动回滚机制。
+- 使用Kubernetes的HPA监控Pod的资源使用情况，结合Prometheus告警，实现自动回滚机制。
 - 编写Kubernetes Operator或使用Argo Rollouts等工具，监听Prometheus的告警事件，当检测到v2异常时，自动将流量切回v1，并删除或缩减v2的Pod数量。
 ### 具体说一下Nginx Ingress的流量调度
 - 配置两个Service，分别指向v1和v2的Deployment。
