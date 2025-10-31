@@ -30,6 +30,10 @@
 - `@Before`、`@After`、`@Around`：定义切面方法的执行时机，分别表示在方法执行前、后和环绕执行。
 
 ## Spring的AOP
+### 什么是AOP？
+AOP（面向切面编程）是Spring框架的核心功能之一，它允许开发者将横切关注点（如日志、事务、安全等）从业务逻辑中分离出来，提高代码的模块化程度。
+### AOP的原理是什么？
+Spring AOP 的实现原理主要基于动态代理技术，它通过在运行时动态生成代理对象来实现横切关注点的织入。
 
 
 ## Spring中Bean的生命周期
@@ -59,3 +63,41 @@ Spring通过三级缓存机制来解决Bean的循环依赖问题。三级缓存�
 1. **一级缓存（singletonObjects）**：存放完全初始化好的单例Bean
 2. **二级缓存（earlySingletonObjects）**：存放正在创建中的单例Bean的早期引用
 3. **三级缓存（singletonFactories）**：存放Bean的工厂对象，用于创建Bean的早期引用
+
+## Spring中Bean的注入方式有哪几种，有什么区别？
+1. **构造器注入**：通过构造器参数注入依赖
+```Java
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    // 构造器注入
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+}
+```
+2. **Setter方法注入**：通过Setter方法注入依赖
+```Java
+@Service
+public class UserService {
+    private UserRepository userRepository; 
+    // Setter方法注入
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+}
+```
+3. **字段注入**：直接在字段上使用`@Autowired`注解
+```Java
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+}
+```
+区别：
+- 构造器注入：确保依赖在对象创建时就被注入，适用于必须的依赖。
+- Setter方法注入：允许在对象创建后再

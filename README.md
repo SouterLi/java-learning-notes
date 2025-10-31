@@ -6,7 +6,7 @@
 ## 数据库
 ### MySQL
 - [MySQL基础知识总结](database/mysql/mysql-basic.md)
-- [MySQL常见面试题](database/mysql/database-transactional.md)
+- [MySQL常见面试题](database/mysql/mysql-question.md)
 - [数据库查询性能优化](database/mysql/mysql-performance.md)
 - [数据库事务](database/mysql/mysql-transaction.md)
 ### Redis
@@ -19,9 +19,11 @@
 - [Elasticsearch知识总结](database/elasticsearch.md)
 
 ## 并发编程
+- [Java并发编程知识总结](concurrency/concurrency-basic.md)
+- [Java并发编程常见面试题](concurrency/concurrency-question.md)
 - [Java常见的锁](concurrency/lock.md)
-- [Java多线程基础知识总结](concurrency/thread.md)
-- [Java 原子类](concurrency/automic.md)
+- [Java多线程知识总结](concurrency/thread.md)
+- [Java并发工具类](concurrency/concurrency-utils.md)
 
 ## 分布式系统
 - [分布式系统知识总结](distributed-system/distributed-system.md)
@@ -36,9 +38,7 @@
 - [Java8新特性](java/new-in-java8.md)
 - [Collection 知识总结](java/collection.md)
 - [Map 知识总结](java/map.md)
-- [面向对象编程](java/oop.md)
-- [Java异常处理](java/exception-todo.md)
-- [Java反射](java/reflection.md)
+- [Java异常处理](java/exception.md)
 - [Java设计模式](java/design-model.md)
 
 ## JVM
