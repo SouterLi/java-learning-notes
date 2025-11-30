@@ -1,4 +1,5 @@
 # Mybatis
+
 ## mybatis底层原理
 - **动态代理**：Mapper 接口通过代理类执行 SQL。
 - **SQL 解析与执行**：Executor + StatementHandler 处理 JDBC 操作。
@@ -25,9 +26,12 @@ MyBatis 的缓存机制分为一级缓存和二级缓存：
 因为MyBatis启用了预编译功能，在SQL执行前，会先将SQL发送给数据库进行编译；
 执行时，直接使用编译好的SQL，替换占位符“?”就可以了。因为SQL注入只能对编译过程起作用，所以这样的方式就很好地避免了SQL注入的问题。  
 ### MyBatis是如何做到SQL预编译的呢？
-其实在框架底层，是JDBC中的PreparedStatement类在起作用，PreparedStatement是我们很熟悉的Statement的子类，它的对象包含了编译好的SQL语句。
-这种“准备好”的方式不仅能提高安全性，而且在多次执行同一个SQL时，能够提高效率。
-原因是SQL已编译好，再次执行时无需再编译。
+MyBatis执行sql的过程如下：
+- 1.MyBatis解析xml语句，将SQL语句中的#{}占位符替换为?，生成新的SQL语句字符串。
+- 2.创建PreparedStatement对象，将新的SQL语句发送给数据库服务器进行预编译。
+- 3.Mybatis调用PreparedStatement的set方法，将参数值设置到SQL语句中对应的?位置。
+- 4.调用PreparedStatement.executeQuery()方法，执行sql，获取结果集。
+也就是说，预编译其实是通过JDBC提供的PreparedStatement来实现的，MyBatis只是对SQL语句进行了预处理，将#{}替换为?，从而实现了SQL预编译。
 
 ## MyBatis框架的设计思想
 MyBatis框架的设计思想主要包括以下几个方面：
